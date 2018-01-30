@@ -1,6 +1,8 @@
 package sample;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Circle;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
@@ -40,12 +42,16 @@ public class Controller implements Initializable
 
     @FXML private Circle dioda;
 
+
+
     private boolean change_PSW = false;
     private String PIN;
     private String kod="1111";
     private StringBuilder builder =new StringBuilder();
     private File log_file = new File("Log.txt");
     Serialization serialization = new Serialization();
+
+
 
 
     public Controller() throws IOException {
@@ -59,16 +65,22 @@ public class Controller implements Initializable
         text.setText("Wprowadz haslo:");
 
 
+
         final Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10000), e-> {
             changelog(true);
             text.setText("Zbyt długie wprowadzanie kodu");
             builder.setLength(0);
+            Main.sound =new Media(new File("Clock-ringing.mp3").toURI().toString());
+            Main.mediaplayer=new MediaPlayer(Main.sound);
+            Main.mediaplayer.play();
+
         }));
 
         b1.setOnAction(e ->
         {
             addToText("1");
             timeline.play();
+
         });
         b2.setOnAction(e ->
         {
@@ -184,12 +196,20 @@ public class Controller implements Initializable
     }
     private void checkedPassword() throws IOException {
         if(PIN.equals(kod)) {
+
             text.setText("poprawny kod");
             changelog(false);
             dioda.setFill(GREEN);
+            Main.sound =new Media(new File("poprawny.mp3").toURI().toString());
+            Main.mediaplayer=new MediaPlayer(Main.sound);
+            Main.mediaplayer.play();
+
         }
         else {
             text.setText("niepoprawny kod");
+            Main.sound =new Media(new File("Clock-ringing.mp3").toURI().toString());
+            Main.mediaplayer=new MediaPlayer(Main.sound);
+            Main.mediaplayer.play();
             DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
             Date date = new Date();
             String currentDate = dateFormat.format(date);
@@ -203,5 +223,7 @@ public class Controller implements Initializable
             serialization.serialize(currentDate,PIN);
         }
     }
+
+
 }
 
